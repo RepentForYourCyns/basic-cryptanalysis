@@ -23,7 +23,6 @@ public class CaesarCipher {
             int asciiIn = Character.toUpperCase(in.charAt(i));
             int asciiOut;
             asciiIn -= 64;
-            // TODO Investigate problem with modulus?
             switch (encOrDec) {
                 case ENCIPHER:
                     asciiOut = (asciiIn + key) % 26;
@@ -31,7 +30,7 @@ public class CaesarCipher {
                 case DECIPHER:
                     asciiOut = (asciiIn - key) % 26;
                     if(asciiOut < 0) {
-                        asciiOut += 25;
+                        asciiOut += 26;
                     }
                     break;
                 default:
