@@ -20,27 +20,28 @@ public class CaesarCipher {
     public static String rotate(String in, int key, int encOrDec) {
         String out = "";
         for (int i = 0; i < in.length(); i++) {
-            int asciiIn = Character.toUpperCase(in.charAt(i));
-            int asciiOut;
-            asciiIn -= 65;
-            switch (encOrDec) {
-                case ENCIPHER:
-                    asciiOut = (asciiIn + key) % 26;
-                    break;
-                case DECIPHER:
-                    asciiOut = (asciiIn - key) % 26;
-                    if(asciiOut < 0) {
-                        asciiOut += 26;
-                    }
-                    break;
-                default:
-                    asciiOut = asciiIn;
-            }
-            asciiOut += 65;
-            char chOut = (char) asciiOut;
-            out += chOut;
+            out += rotateLetter(Character.toUpperCase(in.charAt(i)), key, encOrDec);
         }
         return out;
+    }
+
+    public static char rotateLetter(char in, int key, int encOrDec) {
+        int asciiOut;
+        in -= 65;
+        switch (encOrDec) {
+            case ENCIPHER:
+                asciiOut = (in + key) % 26;
+                break;
+            case DECIPHER:
+                asciiOut = (in - key) % 26;
+                if(asciiOut < 0) {
+                    asciiOut += 26;
+                }
+                break;
+            default:
+                asciiOut = in;
+        }
+        return (char) (asciiOut + 65);
     }
 
     public static ArrayList<String> autoDecipher(String in) {

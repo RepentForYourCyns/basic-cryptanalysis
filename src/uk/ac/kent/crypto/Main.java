@@ -5,11 +5,13 @@ public class Main {
     private static final String CAESAR = "caesar";
     private static final String FREQ_ANALYSIS = "freq";
     private static final String LETTER_FREQ_MATCH = "-sm";
-    private static final String CAESAR_ENC = "-e";
-    private static final String CAESAR_DEC = "-d";
-    private static final String CAESAR_KEY = "-k";
-    private static final String CAESAR_TXT = "-t";
-    private static final String CAESAR_AUTO = "-a";
+    private static final String VIGENERE = "vigenere";
+    private static final String ENC = "-e";
+    private static final String DEC = "-d";
+    private static final String KEY = "-k";
+    private static final String TXT = "-t";
+    private static final String AUTO = "-a";
+    private static final String KEYLENGTH = "-kl";
     private static final String HELP1 = "--help";
     private static final String USAGE = "\nUsage:\n\njava uk.ac.kent.crypto.Main " + FUNC
             + " <function> [arguments] [options...]"
@@ -20,11 +22,20 @@ public class Main {
             + "\n\t" + LETTER_FREQ_MATCH
             + " <text>\t\tStrict match the character frequencies in the provided text to the known character frequencies in English"
             + "\n\nCaesar Cipher Arguments:"
-            + "\n\t[" + CAESAR_ENC + "|" + CAESAR_DEC + "]\t\t\tWhether to encipher or decipher"
-            + "\n\t" + CAESAR_KEY + " <key>\t\tA number from 0 to 25 to act as the key"
-            + "\n\t" + CAESAR_TXT + " <text>\t\tThe text to encipher or decipher"
+            + "\n\t[" + ENC + "|" + DEC + "]\t\t\tWhether to encipher or decipher"
+            + "\n\t" + KEY + " <key>\t\tA number from 0 to 25 to act as the key"
+            + "\n\t" + TXT + " <text>\t\tThe text to encipher or decipher"
             + "\n\tOR"
-            + "\n\t" + CAESAR_AUTO + " <text>\t\tAttempt to automatically find the key"
+            + "\n\t" + AUTO + " <text>\t\tAttempt to automatically find the key"
+            + "\n\nVigenere Cipher Arguments:"
+            + "\n\t[" + ENC + "|" + DEC + "]\t\t\tWhether to encipher or decipher"
+            + "\n\t" + KEY + " <text>\t\tA string to act as the key"
+            + "\n\t" + TXT + " <text>\t\tThe text to encipher or decipher"
+            + "\n\tOR"
+            + "\n\t" + AUTO + " <text>\t\tAttempt to automatically find the key"
+            + "\n\tOR"
+            + "\n\t" + AUTO + " <text>\t\tAttempt to automatically find the key"
+            + "\n\r" + KEYLENGTH + " <keylength>\rThe length of the key"
             + "\n\nOptions:"
             + "\n\t" + HELP1 + "\t\t\tDisplays help"
             + "\n\nNOTE: TEXTINPUTMUSTNOTCONTAINSPACES";
@@ -41,7 +52,8 @@ public class Main {
         if (!new ArgumentParser(args).parse()) {
             usage();
         }
-        ;
+        // System.out.println(
+        //     VigenereCipher.rotate("HAVMGYRVRWBVJVJCMWGIKPLWFQTKYI", "TESSOFTHEDURBERVILLES", VigenereCipher.DECIPHER));
     }
 
     /**
@@ -76,9 +88,38 @@ public class Main {
             } else if (parseToken(FREQ_ANALYSIS)) {
                 i++;
                 return parseFreqFunc();
+            } else if(parseToken(VIGENERE)) {
+                i++;
+                return parseVigenereFunc();
             } else {
                 return false;
             }
+        }
+
+        private boolean parseVigenereFunc() {
+            int encOrDec;
+            if (parseToken(ENC)) {
+                encOrDec = VigenereCipher.ENCIPHER;
+            } else if (parseToken(DEC)) {
+                encOrDec = VigenereCipher.DECIPHER;
+            } else if (parseToken(AUTO)) {
+                // TODO Automatically break Vigenere cipher
+                return true;
+            } else {
+                return false;
+            }
+            i++;
+            if (!parseToken(KEY))
+                return false;
+            i++;
+            String k = args[i];
+            i++;
+            if (!parseToken(TXT))
+                return false;
+            i++;
+            String txt = args[i];
+            System.out.println(VigenereCipher.rotate(txt, k, encOrDec));
+            return true;
         }
 
         private boolean parseFreqFunc() {
@@ -92,23 +133,23 @@ public class Main {
 
         private boolean parseCaesarFunc() {
             int encOrDec;
-            if (parseToken(CAESAR_ENC)) {
+            if (parseToken(ENC)) {
                 encOrDec = CaesarCipher.ENCIPHER;
-            } else if (parseToken(CAESAR_DEC)) {
+            } else if (parseToken(DEC)) {
                 encOrDec = CaesarCipher.DECIPHER;
-            } else if (parseToken(CAESAR_AUTO)) {
+            } else if (parseToken(AUTO)) {
                 System.out.println(FrequencyAnalyser.pickLikelyPlaintext(CaesarCipher.autoDecipher(args[++i])));
                 return true;
             } else {
                 return false;
             }
             i++;
-            if (!parseToken(CAESAR_KEY))
+            if (!parseToken(KEY))
                 return false;
             i++;
             int k = Integer.valueOf(args[i]);
             i++;
-            if (!parseToken(CAESAR_TXT))
+            if (!parseToken(TXT))
                 return false;
             i++;
             String txt = args[i];
