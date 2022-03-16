@@ -11,7 +11,6 @@ public class Main {
     private static final String CAESAR_TXT = "-t";
     private static final String CAESAR_AUTO = "-a";
     private static final String HELP1 = "--help";
-    private static final String HELP2 = "-?";
     private static final String USAGE = "\nUsage:\n\njava uk.ac.kent.crypto.Main " + FUNC
             + " <function> [arguments] [options...]"
             + "\n\nFunctions:"

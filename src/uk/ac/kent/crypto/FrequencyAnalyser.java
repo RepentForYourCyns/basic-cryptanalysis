@@ -10,6 +10,7 @@ import java.util.Comparator;
  * Frequencies taken from:
  * http://mathcenter.oxford.emory.edu/site/math125/englishLetterFreqs/
  */
+@SuppressWarnings("unused")
 public class FrequencyAnalyser {
     // 0.0000100000000002 Absolute freq error
     private static final Letter[] ALPHABET = { Letter.A, Letter.B, Letter.C, Letter.D, Letter.E, Letter.F, Letter.G,
