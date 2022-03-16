@@ -6,11 +6,11 @@ public class VigenereCipher {
 
     public static String rotate(String in, String keyStr, int encOrDec) {
         int[] key = new int[keyStr.length()];
-        for(int i = 0; i < key.length; i++) {
+        for (int i = 0; i < key.length; i++) {
             key[i] = Character.toUpperCase(keyStr.charAt(i)) - 65;
         }
         String out = "";
-        for(int i = 0; i < in.length(); i++) {
+        for (int i = 0; i < in.length(); i++) {
             out += CaesarCipher.rotateLetter(Character.toUpperCase(in.charAt(i)), key[i % key.length], encOrDec);
         }
         return out;
@@ -21,6 +21,21 @@ public class VigenereCipher {
     }
 
     public static String autoDecipher(String cipher, int keyLength) {
-        return null;
+        String[] subCiphers = new String[keyLength];
+        for (int i = 0; i < subCiphers.length; i++) {
+            subCiphers[i] = "";
+        }
+        for (int i = 0; i < cipher.length(); i++) {
+            subCiphers[i % keyLength] += Character.toUpperCase(cipher.charAt(i));
+        }
+        int[] keyInts = new int[keyLength];
+        for (int i = 0; i < keyInts.length; i++) {
+            keyInts[i] = FrequencyAnalyser.pickLikelyKey(CaesarCipher.tryAllKeys(subCiphers[i])) + 65;
+        }
+        char[] key = new char[keyInts.length];
+        for (int i = 0; i < key.length; i++) {
+            key[i] = (char) keyInts[i];
+        }
+        return rotate(cipher, String.valueOf(key), DECIPHER);
     }
 }

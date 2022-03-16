@@ -1,7 +1,5 @@
 package uk.ac.kent.crypto;
 
-import java.util.ArrayList;
-
 /**
  * Represents the caesar cipher
  */
@@ -12,9 +10,10 @@ public class CaesarCipher {
     /**
      * Perform a caesar cipher/decipher
      * 
-     * @param in input text
-     * @param key key (a number from 1 to 25)
-     * @param encOrDec whether to cipher or decipher the input text (use CaesarCipher constants)
+     * @param in       input text
+     * @param key      key (a number from 1 to 25)
+     * @param encOrDec whether to cipher or decipher the input text (use
+     *                 CaesarCipher constants)
      * @return ciphered/deciphered text
      */
     public static String rotate(String in, int key, int encOrDec) {
@@ -25,6 +24,14 @@ public class CaesarCipher {
         return out;
     }
 
+    /**
+     * Rotate a string forwards or backwards in the alphabet
+     * 
+     * @param in       string to be rotated
+     * @param key      number of steps to rotate by
+     * @param encOrDec whether to rotate forwards (encipher) or backwards (decipher)
+     * @return rotated string
+     */
     public static char rotateLetter(char in, int key, int encOrDec) {
         int asciiOut;
         in -= 65;
@@ -34,7 +41,7 @@ public class CaesarCipher {
                 break;
             case DECIPHER:
                 asciiOut = (in - key) % 26;
-                if(asciiOut < 0) {
+                if (asciiOut < 0) {
                     asciiOut += 26;
                 }
                 break;
@@ -44,12 +51,18 @@ public class CaesarCipher {
         return (char) (asciiOut + 65);
     }
 
-    public static ArrayList<String> autoDecipher(String in) {
-        ArrayList<String> outs = new ArrayList<>();
-        for(int k = 1; k < 26; k++) {
-            outs.add(rotate(in, k, DECIPHER));
+    /**
+     * Try all 25 possible keys on an input string
+     * 
+     * @param in string to decipher
+     * @return an array containing all 25 possible deciphered strings, with each in
+     *         the index corresponding to its key
+     */
+    public static String[] tryAllKeys(String in) {
+        String[] outs = new String[26];
+        for (int k = 1; k < 26; k++) {
+            outs[k] = rotate(in, k, DECIPHER);
         }
-        
         return outs;
     }
 }

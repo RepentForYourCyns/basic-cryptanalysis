@@ -49,11 +49,11 @@ public class Main {
      *             -t <text> Text to be encrypted or decrypted
      */
     public static void main(String[] args) {
+        // TODO Take input from sysin instead of argument
+        // TODO Neaten up usage options
         if (!new ArgumentParser(args).parse()) {
             usage();
         }
-        // System.out.println(
-        //     VigenereCipher.rotate("HAVMGYRVRWBVJVJCMWGIKPLWFQTKYI", "TESSOFTHEDURBERVILLES", VigenereCipher.DECIPHER));
     }
 
     /**
@@ -64,19 +64,27 @@ public class Main {
         System.exit(-1);
     }
 
+    /**
+     * Recursive descent parser for the arguments to the program
+     */
     private static class ArgumentParser {
         private int i = 0;
         private String[] args;
 
+        /**
+         * Cosntructs an argument parser
+         * 
+         * @param args arguments to parse
+         */
         public ArgumentParser(String[] args) {
             this.args = args;
         }
 
         /**
-         * Recursive descent parser for the arguments. Begins by parsing which function
-         * the program has been called to perform
+         * Begins parsing
          * 
-         * @param args Arguments
+         * @param args arguments
+         * @return whether parse was successful
          */
         public boolean parse() {
             if (!parseToken(FUNC))
@@ -88,7 +96,7 @@ public class Main {
             } else if (parseToken(FREQ_ANALYSIS)) {
                 i++;
                 return parseFreqFunc();
-            } else if(parseToken(VIGENERE)) {
+            } else if (parseToken(VIGENERE)) {
                 i++;
                 return parseVigenereFunc();
             } else {
@@ -96,6 +104,11 @@ public class Main {
             }
         }
 
+        /**
+         * Parse arguments for Vigenere cipher
+         * 
+         * @return whether parse was successful
+         */
         private boolean parseVigenereFunc() {
             int encOrDec;
             if (parseToken(ENC)) {
@@ -103,7 +116,14 @@ public class Main {
             } else if (parseToken(DEC)) {
                 encOrDec = VigenereCipher.DECIPHER;
             } else if (parseToken(AUTO)) {
-                // TODO Automatically break Vigenere cipher
+                String txt = args[++i];
+                i++;
+                if (!parseToken(KEYLENGTH)) {
+                    System.out.println(VigenereCipher.autoDecipher(txt));
+                } else {
+                    System.out.println(VigenereCipher.autoDecipher(txt, Integer.valueOf(args[++i])));
+                }
+
                 return true;
             } else {
                 return false;
@@ -138,7 +158,7 @@ public class Main {
             } else if (parseToken(DEC)) {
                 encOrDec = CaesarCipher.DECIPHER;
             } else if (parseToken(AUTO)) {
-                System.out.println(FrequencyAnalyser.pickLikelyPlaintext(CaesarCipher.autoDecipher(args[++i])));
+                System.out.println(FrequencyAnalyser.pickLikelyPlaintext(CaesarCipher.tryAllKeys(args[++i])));
                 return true;
             } else {
                 return false;

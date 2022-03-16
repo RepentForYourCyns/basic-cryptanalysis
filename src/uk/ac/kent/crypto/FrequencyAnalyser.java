@@ -320,10 +320,14 @@ public class FrequencyAnalyser {
         return diff;
     }
 
-    public static String pickLikelyPlaintext(ArrayList<String> in) {
-        int[] diffs = new int[in.size()];
-        for(int i = 0; i < diffs.length; i++) {
-            diffs[i] = FrequencyAnalyser.letterFreqDeviation(in.get(i));
+    public static String pickLikelyPlaintext(String[] in) {
+        return in[pickLikelyKey(in)];
+    }
+
+    public static int pickLikelyKey(String[] in) {
+        int[] diffs = new int[in.length - 1];
+        for(int i = 0; i < in.length; i++) {
+            if(i != 0) diffs[i - 1] = FrequencyAnalyser.letterFreqDeviation(in[i]);
         }
         int smallestDiff = Integer.MAX_VALUE;
         int smallestDiffIndex = 0;
@@ -333,7 +337,7 @@ public class FrequencyAnalyser {
                 smallestDiffIndex = i;
             }
         }
-        return in.get(smallestDiffIndex);
+        return smallestDiffIndex + 1;
     }
 
     // Methodology: Stallings et al have work on the frequency of particular letters
