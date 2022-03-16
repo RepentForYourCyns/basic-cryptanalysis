@@ -319,9 +319,24 @@ public class FrequencyAnalyser {
         return diff;
     }
 
-    // TODO Method(s) to determine consistency of input with letter frequency
+    public static String pickLikelyPlaintext(ArrayList<String> in) {
+        int[] diffs = new int[in.size()];
+        for(int i = 0; i < diffs.length; i++) {
+            diffs[i] = FrequencyAnalyser.letterFreqDeviation(in.get(i));
+        }
+        int smallestDiff = Integer.MAX_VALUE;
+        int smallestDiffIndex = 0;
+        for(int i = 0; i < diffs.length; i++) {
+            if(diffs[i] < smallestDiff) {
+                smallestDiff = diffs[i];
+                smallestDiffIndex = i;
+            }
+        }
+        return in.get(smallestDiffIndex);
+    }
+
     // Methodology: Stallings et al have work on the frequency of particular letters
     // in the english corpus. Use the ORDERING of letter frequencies, starting with
     // the one that Stallings et al come up with and then swapping around the 10 or
-    // so most commong letters to see if the input matches this ordering instead.
+    // so most commong letters to see if the input matches this ordering instead?
 }
