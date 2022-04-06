@@ -17,7 +17,12 @@ public class VigenereCipher {
     }
 
     public static String autoDecipher(String cipher) {
-        return null;
+        // TODO Attempt to infer key length by looking for repetitions
+        String[] outs = new String[cipher.length()];
+        for (int i = 0; i < outs.length; i++) {
+            outs[i] = autoDecipher(cipher, i + 1);
+        }
+        return FrequencyAnalyser.pickLikelyPlaintext(outs);
     }
 
     public static String autoDecipher(String cipher, int keyLength) {

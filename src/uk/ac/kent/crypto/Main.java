@@ -123,7 +123,6 @@ public class Main {
                 } else {
                     System.out.println(VigenereCipher.autoDecipher(txt, Integer.valueOf(args[++i])));
                 }
-
                 return true;
             } else {
                 return false;
