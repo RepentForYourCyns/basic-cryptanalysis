@@ -7,7 +7,7 @@ public class VigenereCipher {
     public static String rotate(String in, String keyStr, int encOrDec) {
         int[] key = new int[keyStr.length()];
         for (int i = 0; i < key.length; i++) {
-            key[i] = Character.toUpperCase(keyStr.charAt(i)) - 65;
+            key[i] = Character.toUpperCase(keyStr.charAt(i)) - 'A';
         }
         String out = "";
         for (int i = 0; i < in.length(); i++) {
@@ -35,7 +35,7 @@ public class VigenereCipher {
         }
         int[] keyInts = new int[keyLength];
         for (int i = 0; i < keyInts.length; i++) {
-            keyInts[i] = FrequencyAnalyser.pickLikelyKey(CaesarCipher.tryAllKeys(subCiphers[i])) + 65;
+            keyInts[i] = FrequencyAnalyser.pickLikelyKey(CaesarCipher.tryAllKeys(subCiphers[i])) + 'A';
         }
         char[] key = new char[keyInts.length];
         for (int i = 0; i < key.length; i++) {

@@ -34,7 +34,7 @@ public class CaesarCipher {
      */
     public static char rotateLetter(char in, int key, int encOrDec) {
         int asciiOut;
-        in -= 65;
+        in -= 'A';
         switch (encOrDec) {
             case ENCIPHER:
                 asciiOut = (in + key) % 26;
@@ -48,7 +48,7 @@ public class CaesarCipher {
             default:
                 asciiOut = in;
         }
-        return (char) (asciiOut + 65);
+        return (char) (asciiOut + 'A');
     }
 
     /**
@@ -56,13 +56,33 @@ public class CaesarCipher {
      * 
      * @param in string to decipher
      * @return an array containing all 25 possible deciphered strings, with each in
-     *         the index corresponding to its key
+     *         the index corresponding to the key used to decipher it minus one
      */
     public static String[] tryAllKeys(String in) {
-        String[] outs = new String[26];
+        String[] outs = new String[25];
         for (int k = 1; k < 26; k++) {
-            outs[k] = rotate(in, k, DECIPHER);
+            outs[k - 1] = rotate(in, k, DECIPHER);
         }
         return outs;
     }
+
+    // public static String autoDecipher(String in) {
+    //     return rotate(in, autoKeyFind(in), DECIPHER);
+    // }
+
+    // public static int autoKeyFind(String in) {
+    //     double[] scores = new double[25];
+    //     for(int i = 0; i < 25; i++) {
+    //         scores[i] = FrequencyAnalyser.chiSquareCalc(in, i + 1);
+    //     }
+    //     double minScore = Double.MAX_VALUE;
+    //     int minIndex = 0;
+    //     for(int i = 0; i < 25; i++) {
+    //         if(scores[i] < minScore) {
+    //             minScore = scores[i];
+    //             minIndex = i;
+    //         }
+    //     }
+    //     return minIndex + 1;
+    // }
 }

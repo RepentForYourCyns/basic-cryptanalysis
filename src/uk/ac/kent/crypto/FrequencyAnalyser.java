@@ -128,58 +128,6 @@ public class FrequencyAnalyser {
     }
 
     /**
-     * Compute how different the letter frequency profile in the given text is to the
-     * English corpus
-     * 
-     * @param text Text to test letter frequency of
-     * @return A number representing how different the letter frequency in the text is from the English corpus
-     */
-    public static int letterFreqDeviation(String text) {
-        ArrayList<Letter> letters = new ArrayList<>();
-        int letterPointer = 0;
-        Letter letter;
-        do {
-            letter = charToLetter(text.charAt(letterPointer));
-            if (letter != null) {
-                letters.add(letter);
-            }
-            letterPointer++;
-        } while (letterPointer < text.length());
-        class LetterFreq {
-            private Letter letter;
-            private int count;
-
-            public LetterFreq(Letter letter) {
-                this.letter = letter;
-                this.count = 0;
-            }
-        }
-        ArrayList<LetterFreq> letterFreqs = new ArrayList<>();
-        for (Letter l : ALPHABET) {
-            letterFreqs.add(new LetterFreq(l));
-        }
-        for (Letter l : letters) {
-            // TODO Could use better search algorithm
-            for (LetterFreq lf : letterFreqs) {
-                if (lf.letter.equals(l)) {
-                    lf.count++;
-                }
-            }
-        }
-        letterFreqs.sort(new Comparator<LetterFreq>() {
-            @Override
-            public int compare(LetterFreq o1, LetterFreq o2) {
-                return o2.count - o1.count;
-            }
-        });
-        Letter[] lettersByFreq = new Letter[letterFreqs.size()];
-        for (int i = 0; i < lettersByFreq.length; i++) {
-            lettersByFreq[i] = letterFreqs.get(i).letter;
-        }
-        return compareRelativeFrequencies(lettersByFreq, ALPHABET_BY_FREQ);
-    }
-
-    /**
      * Turn a character into its letter enumeration
      * 
      * @param ch An alphabetic character [a-zA-Z]
@@ -297,47 +245,51 @@ public class FrequencyAnalyser {
         }
     }
 
-    /**
-     * Compare two sets of letter frequency results
-     * 
-     * @param freq1 An array containing every letter of the alphabet in order of
-     *              their frequency
-     * @param freq2 An array containing every letter of the alphabet in order of
-     *              their frequency
-     * @return A number representing how different they are
-     */
-    public static int compareRelativeFrequencies(Letter[] freq1, Letter[] freq2) {
-        int diff = 0;
-        for (int i = 0; i < freq1.length; i++) {
-            Letter li = freq1[i];
-            for (int j = 0; j < freq2.length; j++) {
-                Letter lj = freq2[j];
-                if (li.equals(lj)) {
-                    diff += Math.abs(i - j);
-                }
-            }
-        }
-        return diff;
-    }
 
     public static String pickLikelyPlaintext(String[] in) {
-        return in[pickLikelyKey(in)];
+        return in[pickLikelyKey(in) - 1];
     }
 
     public static int pickLikelyKey(String[] in) {
-        int[] diffs = new int[in.length - 1];
+        double[] chiSquares = new double[in.length];
         for(int i = 0; i < in.length; i++) {
-            if(i != 0) diffs[i - 1] = FrequencyAnalyser.letterFreqDeviation(in[i]);
+            chiSquares[i] = FrequencyAnalyser.letterFreqDeviation(in[i]);
         }
-        int smallestDiff = Integer.MAX_VALUE;
-        int smallestDiffIndex = 0;
-        for(int i = 0; i < diffs.length; i++) {
-            if(diffs[i] < smallestDiff) {
-                smallestDiff = diffs[i];
-                smallestDiffIndex = i;
+        double minChiSquare = Integer.MAX_VALUE;
+        int minIndex = 0;
+        for(int i = 0; i < chiSquares.length; i++) {
+            if(chiSquares[i] < minChiSquare) {
+                minChiSquare = chiSquares[i];
+                minIndex = i;
             }
         }
-        return smallestDiffIndex + 1;
+        return minIndex + 1;
+    }
+
+    public static double letterFreqDeviation(String message) {
+        int[] occurances = calculateOccurances(message);
+        double currentChi = 0;
+
+        // For each letter of the alphabet...
+        // Compute the sum of squares of - occurances((char + key) mod 26) / letterProbabilities(char)
+        for(int j = 0; j < occurances.length; j++) {
+            // Calculate the expected probabilities of letters in the english alphabet,
+            // based on how many 'chars' are in the message.
+            double expectedOccurance = ALPHABET[j].freq * message.length();
+
+            double chiAns = occurances[j] / expectedOccurance;
+            double chiSqu = chiAns * chiAns;
+            currentChi += chiSqu;
+        }
+        return currentChi;
+    }
+
+    private static int[] calculateOccurances(String message) {
+        int[] occurences = new int[26];
+        for(int i = 0; i < message.length(); i++) {
+            occurences[(message.toUpperCase().charAt(i) - 'A')]++;
+        }
+        return occurences;
     }
 
     // Methodology: Stallings et al have work on the frequency of particular letters
