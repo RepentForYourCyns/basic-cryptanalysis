@@ -65,4 +65,24 @@ public class CaesarCipher {
         }
         return outs;
     }
+
+    // public static String autoDecipher(String in) {
+    //     return rotate(in, autoKeyFind(in), DECIPHER);
+    // }
+
+    // public static int autoKeyFind(String in) {
+    //     double[] scores = new double[25];
+    //     for(int i = 0; i < 25; i++) {
+    //         scores[i] = FrequencyAnalyser.chiSquareCalc(in, i + 1);
+    //     }
+    //     double minScore = Double.MAX_VALUE;
+    //     int minIndex = 0;
+    //     for(int i = 0; i < 25; i++) {
+    //         if(scores[i] < minScore) {
+    //             minScore = scores[i];
+    //             minIndex = i;
+    //         }
+    //     }
+    //     return minIndex + 1;
+    // }
 }
