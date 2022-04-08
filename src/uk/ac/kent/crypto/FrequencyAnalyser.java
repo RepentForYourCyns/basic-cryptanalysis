@@ -325,19 +325,45 @@ public class FrequencyAnalyser {
     }
 
     public static int pickLikelyKey(String[] in) {
-        int[] diffs = new int[in.length - 1];
+        double[] chiSquares = new double[in.length];
         for(int i = 0; i < in.length; i++) {
-            if(i != 0) diffs[i - 1] = FrequencyAnalyser.letterFreqDeviation(in[i]);
+            chiSquares[i] = FrequencyAnalyser.chiSquareCalc(in[i], i + 1);
         }
-        int smallestDiff = Integer.MAX_VALUE;
-        int smallestDiffIndex = 0;
-        for(int i = 0; i < diffs.length; i++) {
-            if(diffs[i] < smallestDiff) {
-                smallestDiff = diffs[i];
-                smallestDiffIndex = i;
+        double minChiSquare = Integer.MAX_VALUE;
+        int minIndex = 0;
+        for(int i = 0; i < chiSquares.length; i++) {
+            if(chiSquares[i] < minChiSquare) {
+                minChiSquare = chiSquares[i];
+                minIndex = i;
             }
         }
-        return smallestDiffIndex + 1;
+        return minIndex + 1;
+    }
+
+    private static double chiSquareCalc(String message, int key) {
+        int[] occurances = calculateOccurances(message);
+        double currentChi = 0;
+
+        // For each letter of the alphabet...
+        // Compute the sum of squares of - occurances((char + key) mod 26) / letterProbabilities(char)
+        for(int j = 0; j < occurances.length; j++) {
+            // Calculate the expected probabilities of letters in the english alphabet,
+            // based on how many 'chars' are in the message.
+            double expectedOccurance = ALPHABET[j].freq * message.length();
+
+            double chiAns = occurances[(j + key) % 26] / expectedOccurance;
+            double chiSqu = chiAns * chiAns;
+            currentChi += chiSqu;
+        }
+        return currentChi;
+    }
+
+    private static int[] calculateOccurances(String message) {
+        int[] occurences = new int[26];
+        for(int i = 0; i < message.length(); i++) {
+            occurences[(message.toUpperCase().charAt(i) - 'A')]++;
+        }
+        return occurences;
     }
 
     // Methodology: Stallings et al have work on the frequency of particular letters
