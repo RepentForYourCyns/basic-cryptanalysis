@@ -287,7 +287,7 @@ public class FrequencyAnalyser {
     private static int[] calculateOccurances(String message) {
         int[] occurences = new int[26];
         for(int i = 0; i < message.length(); i++) {
-            occurences[(message.toUpperCase().charAt(i) - 'A')]++;
+            occurences[(Character.toUpperCase(message.charAt(i)) - 'A')]++;
         }
         return occurences;
     }
